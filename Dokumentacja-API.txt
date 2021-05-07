@@ -1,0 +1,16 @@
+##### USER #####
+
+POST /register
+POST /login
+GET /profile
+POST /edit{id}
+GET /home
+
+
+##### ADMIN #####
+
+POST /admin-register
+POST /admin-login
+GET /admin-profile
+POST /admin-edit{id}
+GET /home
