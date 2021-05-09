@@ -9,7 +9,8 @@ POST /edit{id}</br>
 GET /home</br>
 
 
-##### ADMIN #####</br></br>
+##### ADMIN #####
+</br></br>
 
 POST /admin-register</br>
 POST /admin-login</br>
