@@ -1,6 +1,6 @@
 # <b>SymfonyAPI</b> </br></br>
 
-##### USER #####
+<b> USER </b>
 </br></br>
 POST /register</br>
 POST /login</br>
@@ -9,7 +9,7 @@ POST /edit{id}</br>
 GET /home</br>
 
 
-##### ADMIN #####
+<b> ADMIN </b>
 </br></br>
 
 POST /admin-register</br>
