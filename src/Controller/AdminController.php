@@ -77,12 +77,54 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin-edit/{id}", name="api_users_edit", methods={"POST"})
+     * @Route("/admin-edit/{id}", name="api_admin_edit", methods={"POST"})
      */
-    public function editAdminAction($id, Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function editAdminAction($id, EntityManagerInterface $om, Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $user = $entityManager->getRepository(Admin::class)->find($id);
+        $admin = $entityManager->getRepository(Admin::class)->find($id);
+
+        $email = $request->request->get("email");
+        $password = $request->request->get("password");
+        $passwordConfirmation = $request->request->get("password_confirmation");
+
+        $errors = [];
+        if ($password != $passwordConfirmation) {
+            $errors[] = "Password does not match the password confirmation.";
+        }
+        if (strlen($password) < 6) {
+            $errors[] = "Password should be at least 6 characters.";
+        }
+        if (!$errors) {
+            $encodedPassword = $passwordEncoder->encodePassword($admin, $password);
+            $admin->setEmail($email);
+            $admin->setPassword($encodedPassword);
+            try {
+                $om->persist($admin);
+                $om->flush();
+
+                return $this->json([
+                    'admin' => $admin
+                ]);
+            } catch (UniqueConstraintViolationException $e) {
+                $errors[] = "The email provided already has an account!";
+            } catch (\Exception $e) {
+                $errors[] = "Unable to save new user at this time.";
+            }
+        }
+
+        return $this->json([
+            'errors' => $errors
+        ], 400);
+    }
+
+    /**
+     * @Route("/adminuser-edit/{id}", name="api_adminuser_edit", methods={"POST"} )
+     */
+    public function editAdminUserAction(int $id, EntityManagerInterface $om, Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->find($id);
 
         $email = $request->request->get("email");
         $password = $request->request->get("password");
@@ -97,7 +139,7 @@ class AdminController extends AbstractController
             $errors[] = "Password should be at least 6 characters.";
         }
         if (!$errors) {
-            $encodedPassword = $passwordEncoder->encodePassword($admin, $password);
+            $encodedPassword = $passwordEncoder->encodePassword($user, $password);
             $user->setEmail($email);
             $user->setPassword($encodedPassword);
             try {
@@ -114,9 +156,11 @@ class AdminController extends AbstractController
             }
         }
 
+
         return $this->json([
             'errors' => $errors
         ], 400);
+
     }
 
     /**

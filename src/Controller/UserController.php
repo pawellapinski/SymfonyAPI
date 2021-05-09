@@ -81,7 +81,7 @@ class UserController extends AbstractController
     /**
      * @Route("/edit/{id}", name="api_users_edit", methods={"POST"})
      */
-    public function editUserAction(int $id, Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function editUserAction(int $id, EntityManagerInterface $om, Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $user = $entityManager->getRepository(User::class)->find($id);
@@ -116,9 +116,11 @@ class UserController extends AbstractController
             }
         }
 
+
         return $this->json([
             'errors' => $errors
         ], 400);
+
     }
 
     /**
