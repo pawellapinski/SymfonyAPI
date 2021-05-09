@@ -1,4 +1,5 @@
-# <b>SymfonyAPI<b> </br></br>
+# <b>SymfonyAPI</b> </br></br>
+
 ##### USER #####
 </br></br>
 POST /register</br>
