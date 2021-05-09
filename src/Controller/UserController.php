@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -78,11 +79,13 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/edit{id}", name="api_users_edit", methods={"POST"})
+     * @Route("/edit/{id}", name="api_users_edit", methods={"POST"})
      */
-    public function EditUserAction($id, Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function editUserAction(int $id, Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
-        $user = $this->getDoctrine()->getRepository('CoreBundle:User')->findOneBy(['id' => $id, 'deleted' => 0]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(User::class)->find($id);
+
         $email = $request->request->get("email");
         $password = $request->request->get("password");
         $passwordConfirmation = $request->request->get("password_confirmation");

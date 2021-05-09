@@ -77,11 +77,13 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin-edit{id}", name="api_users_edit", methods={"POST"})
+     * @Route("/admin-edit/{id}", name="api_users_edit", methods={"POST"})
      */
-    public function EditUserAction($id, Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function editAdminAction($id, Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
-        $user = $this->getDoctrine()->getRepository('CoreBundle:User')->findOneBy(['id' => $id, 'deleted' => 0]);
+        $entityManager = $this->getDoctrine()->getManager();
+        $user = $entityManager->getRepository(Admin::class)->find($id);
+
         $email = $request->request->get("email");
         $password = $request->request->get("password");
         $passwordConfirmation = $request->request->get("password_confirmation");
@@ -95,7 +97,7 @@ class AdminController extends AbstractController
             $errors[] = "Password should be at least 6 characters.";
         }
         if (!$errors) {
-            $encodedPassword = $passwordEncoder->encodePassword($user, $password);
+            $encodedPassword = $passwordEncoder->encodePassword($admin, $password);
             $user->setEmail($email);
             $user->setPassword($encodedPassword);
             try {
